@@ -12,8 +12,6 @@ export default function ForgetPassword() {
     email: "",
   });
 
-  const field = "email";
-
   const handleGoToLogin = () => {
     navigate("/login");
   };
