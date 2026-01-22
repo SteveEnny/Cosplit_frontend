@@ -1,53 +1,50 @@
-import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
-import Sidebar from "../../components/Layout/Sidebar";
-import Header from "../../components/Layout/DashHeader";
+// src/components/Dashboard/DashboardLayout.jsx
+import { useState, useEffect, useCallback } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import DashboardSidebar from "./DashboardSidebar";
+import DashboardHeader from "./DashboardHeader";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const location = useLocation();
 
-  // Detect screen size
+  // Hide sidebar + header only on post-onboarding route
+  const isPostOnboarding = location.pathname.includes("/dashboard/post-onboarding");
+
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1024);
-    handleResize(); // Initial check
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) setSidebarOpen(false);
+    };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleSidebarToggle = () => {
-    if (isAnimating) return;
-    
-    setIsAnimating(true);
-    setSidebarOpen(!sidebarOpen);
-    
-    // Reset animation state after animation completes
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 700); // Match the sidebar animation duration
-  };
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev);
+  }, []);
+
+  const closeSidebar = useCallback(() => {
+    setSidebarOpen(false);
+  }, []);
 
   return (
-    <div className="flex min-h-screen h-screen w-full overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar
-        sidebarOpen={sidebarOpen}
-        isMobile={isMobile}
-        setSidebarOpen={setSidebarOpen}
-      />
+    <div className="flex h-screen overflow-hidden bg-[#F7F5F9]">
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden transition-all duration-700 ease-in-out">
-        {/* Header */}
-        <Header
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={handleSidebarToggle}
-          isMobile={isMobile}
-        />
+      {/* Sidebar (hidden on post-onboarding) */}
+      {!isPostOnboarding && (
+        <DashboardSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+      )}
 
-        {/* Outlet renders nested dashboard pages */}
-        <main className="flex-1 overflow-y-auto bg-white transition-all duration-700 ease-in-out">
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+
+        {/* Header (hidden on post-onboarding) */}
+        {!isPostOnboarding && (
+          <DashboardHeader onMenuClick={toggleSidebar} />
+        )}
+
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>

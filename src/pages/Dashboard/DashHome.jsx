@@ -47,47 +47,63 @@ const Main = ({ sidebarOpen = false, isMobile = false, setSidebarOpen = () => {}
         </section>
 
         {/* 🟨 Special Deals */}
-        <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-5">#SpecialForYou</h2>
-          
-          <div className="carousel carousel-end rounded-box gap-2 overflow-x-auto ">
-            {deals.map((deal, idx) => (
-              <div key={idx} className="carousel-item relative flex bg-[#1F8225] flex-col justify-between rounded-3xl overflow-hidden text-white shadow-lg hover:shadow-2xl transition-all duration-500 group h-fit ">                <div className={`absolute inset-0 opacity-90`} />
+      <section className="flex flex-col gap-4">
+        <h2 className="text-lg font-bold text-gray-900">#SpecialForYou</h2>
 
-                <div className="relative z-10 p-3 flex flex-col justify-between h-full">
-                  <div className="flex justify-between items-center">
-                     <div className="bg-[#F8F8F8CC] rounded-xl py-1 text-sm px-4 text-[#1A051D]">deal.special</div>
-                    {deal.discount && (
-                      <span className="bg-[#DEF8D1] text-emerald-900 text-xs font-semibold px-3 py-1 rounded-full">
-                        {deal.discount}
-                      </span>
-                    )}
-                  </div>
-               
+        <div className="carousel carousel-end rounded-box gap-3 overflow-x-auto">
+          {deals.map((deal, idx) => (
+            <div
+              key={idx}
+              className="carousel-item relative flex bg-[#1F8225] flex-col justify-between
+              rounded-2xl overflow-hidden text-white shadow-lg hover:shadow-xl
+              transition-all duration-300 h-fit min-w-[260px]"
+            >
+              <div className="absolute inset-0 opacity-90" />
 
-                  <div className="my-4">
-                    <h3 className="text-xl font-bold mb-1">{deal.title}</h3>
-                    <p className="text-emerald-100 text-sm">{deal.description}</p>
-                    <p className="text-emerald-100 text-xs mt-1">{deal.details}</p>
+              <div className="relative z-10 p-4 flex flex-col justify-between h-full">
+                {/* Deal Header */}
+                <div className="flex justify-between items-center mb-3">
+                  <div className="bg-[#F8F8F8CC] rounded-xl py-1 px-2 text-xs text-[#1A051D]">
+                    {deal.badge}
                   </div>
 
-                  <div className="flex justify-between items-center gap-4">
-                    <div className="flex items-center gap-4 text-xs text-white">
-                      <span className="flex items-center gap-1">⏱ {deal.time}</span>
-                      <span className="flex items-center gap-1">
-                        <Users2 className="w-4 h-4" /> {deal.participants}
-                      </span>
-                    </div>
+                  {deal.discount && (
+                    <span className="bg-[#DEF8D1] text-emerald-900 text-xs font-semibold px-3 py-1 rounded-full">
+                      {deal.discount}
+                    </span>
+                  )}
+                </div>
 
-                    <button className="px-4 text-xs bg-[#FFF4D6] text-[#A37800] font-semibold py-2 rounded-lg transition">
-                      Join Now
-                    </button>
+                <div className="mb-4">
+                  <h3 className="text-base font-semibold mb-1">{deal.title}</h3>
+                  <p className="text-emerald-100 text-sm leading-snug">
+                    {deal.description}
+                  </p>
+                  <p className="text-emerald-100 text-xs mt-1">
+                    {deal.details}
+                  </p>
+                </div>
+
+                <div className="flex justify-between items-center gap-3">
+                  <div className="flex items-center gap-4 text-xs text-white">
+                    <span className="flex items-center gap-1">
+                      ⏱ {deal.time}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users2 className="w-4 h-4" />
+                      {deal.participants}
+                    </span>
                   </div>
+
+                  <button className="px-4 py-2 text-xs bg-[#FFF4D6] text-[#A37800] font-semibold rounded-lg transition">
+                    Join Now
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          ))}
+        </div>
+      </section>
 
         {/* 🟦 Create Splittz Banner */}
         <section>

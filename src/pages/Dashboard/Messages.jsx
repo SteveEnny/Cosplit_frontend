@@ -1,322 +1,389 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  MoreVertical, 
-  Check, 
-  CheckCheck, 
-  Send, 
-  Phone, 
-  Video, 
-  Users,
-  UserPlus,
-  MessageSquare
-} from 'lucide-react';
+import { useState, useEffect, useRef } from "react";
+import { Search, Send, ArrowLeft, MoreVertical, Phone, Video, Smile, Paperclip } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const MessagingDashboard = () => {
-  const [activeGroup, setActiveGroup] = useState('Concert Ticket Group');
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  
-  // Mock data for groups
-  const groups = [
+export default function MessagingApp() {
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [messageInput, setMessageInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [messages, setMessages] = useState({});
+  const messagesEndRef = useRef(null);
+
+  const contacts = [
     {
       id: 1,
-      name: 'Concert Ticket Group',
-      description: 'Request for the client',
-      members: 5,
+      name: "Sarah Johnson",
+      avatar: "SJ",
+      lastMessage: "See you tomorrow! 🎉",
+      time: "2:30 PM",
       unread: 2,
-      active: true,
-      lastMessage: 'Android/Android/Android',
-      time: '10:30 AM'
+      online: true,
     },
     {
       id: 2,
-      name: 'Jumps',
-      description: 'Request for the client',
-      members: 3,
+      name: "Michael Chen",
+      avatar: "MC",
+      lastMessage: "Thanks for the help with the project",
+      time: "1:15 PM",
       unread: 0,
-      lastMessage: 'PTSD phone update',
-      time: 'Yesterday'
+      online: true,
     },
     {
       id: 3,
-      name: 'Pizza Party Group',
-      description: 'Request for the client',
-      members: 8,
-      unread: 5,
-      lastMessage: 'Order confirmed!',
-      time: '11:45 AM'
+      name: "Emily Rodriguez",
+      avatar: "ER",
+      lastMessage: "Did you get my email about the meeting?",
+      time: "Yesterday",
+      unread: 1,
+      online: false,
     },
     {
       id: 4,
-      name: 'Smart Tail Group',
-      description: 'Request for the client',
-      members: 4,
+      name: "David Kim",
+      avatar: "DK",
+      lastMessage: "Let's catch up soon, it's been a while",
+      time: "Yesterday",
       unread: 0,
-      lastMessage: 'Android/Android/Android',
-      time: 'Monday'
+      online: false,
     },
     {
       id: 5,
-      name: 'Bulls Concerted Group',
-      description: 'Request for the client',
-      members: 6,
-      unread: 1,
-      lastMessage: 'Meeting at 3 PM',
-      time: '9:15 AM'
-    },
-    {
-      id: 6,
-      name: 'Bulk Groceries Group',
-      description: 'Shared shopping list',
-      members: 4,
+      name: "Lisa Anderson",
+      avatar: "LA",
+      lastMessage: "Perfect! That works for me 👍",
+      time: "Monday",
       unread: 0,
-      lastMessage: 'Milk and eggs added',
-      time: 'Sunday'
+      online: true,
     },
-    {
-      id: 7,
-      name: 'Tony / Joyce',
-      description: 'Personal chat',
-      members: 2,
-      unread: 3,
-      lastMessage: 'See you tomorrow!',
-      time: 'Just now'
-    }
   ];
 
-  // Mock messages for active group
+  // Initialize messages state
   useEffect(() => {
-    const sampleMessages = {
-      'Concert Ticket Group': [
-        { id: 1, text: 'You joined the splitz', sender: 'system', time: '10:28 AM', read: true },
-        { id: 2, text: 'Please choose to be free for background and contact with you about this policy.', sender: 'admin', time: '10:29 AM', read: true },
-        { id: 3, text: 'Thanks to join us', sender: 'admin', time: '10:29 AM', read: true },
-        { id: 4, text: 'Some more fun I just want to express that information on my favorite drink along others.', sender: 'user', time: '10:30 AM', read: true },
-        { id: 5, text: 'Please contact', sender: 'user', time: '10:30 AM', read: true },
-        { id: 6, text: 'Apply to join us', sender: 'admin', time: '10:31 AM', read: false },
-        { id: 7, text: 'Android/Android/Android', sender: 'user', time: '10:31 AM', read: false }
+    const initialMessages = {
+      1: [
+        { id: 1, text: "Hey! How are you doing today?", sender: "them", time: "2:15 PM", timestamp: new Date() },
+        { id: 2, text: "I'm great! Just working on some new features. How about you?", sender: "me", time: "2:20 PM", timestamp: new Date() },
+        { id: 3, text: "Doing amazing! Want to grab coffee tomorrow morning?", sender: "them", time: "2:25 PM", timestamp: new Date() },
+        { id: 4, text: "Absolutely! How about 10 AM at our usual spot?", sender: "me", time: "2:28 PM", timestamp: new Date() },
+        { id: 5, text: "Sounds perfect! See you tomorrow! 🎉", sender: "them", time: "2:30 PM", timestamp: new Date() },
       ],
-      'default': [
-        { id: 1, text: 'Chat and get engaged with your splitz.', sender: 'system', time: 'Today', read: true }
-      ]
+      2: [
+        { id: 1, text: "Hi! Can you help me with the React project?", sender: "them", time: "1:00 PM", timestamp: new Date() },
+        { id: 2, text: "Of course! What specific part are you stuck on?", sender: "me", time: "1:05 PM", timestamp: new Date() },
+        { id: 3, text: "Thanks for the help! Really appreciate it.", sender: "them", time: "1:15 PM", timestamp: new Date() },
+      ],
+      3: [
+        { id: 1, text: "Did you get my email about the meeting updates?", sender: "them", time: "Yesterday", timestamp: new Date() },
+      ],
+      4: [
+        { id: 1, text: "Let's catch up soon, it's been too long!", sender: "them", time: "Yesterday", timestamp: new Date() },
+      ],
+      5: [
+        { id: 1, text: "Perfect! That schedule works for me. Let's do it! 👍", sender: "them", time: "Monday", timestamp: new Date() },
+      ],
     };
-    
-    setMessages(sampleMessages[activeGroup] || sampleMessages.default);
-  }, [activeGroup]);
+    setMessages(initialMessages);
+  }, []);
 
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      const newMsg = {
-        id: messages.length + 1,
-        text: newMessage,
-        sender: 'user',
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (selectedContact) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, selectedContact]);
+
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSendMessage = () => {
+    if (messageInput.trim() && selectedContact) {
+      const newMessage = {
+        id: Date.now(),
+        text: messageInput,
+        sender: "me",
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        read: true
+        timestamp: new Date(),
       };
-      setMessages([...messages, newMsg]);
-      setNewMessage('');
+      
+      setMessages(prev => ({
+        ...prev,
+        [selectedContact.id]: [...(prev[selectedContact.id] || []), newMessage]
+      }));
+      
+      setMessageInput("");
+      
+      // Update last message in contact list
+      const contactIndex = contacts.findIndex(c => c.id === selectedContact.id);
+      if (contactIndex !== -1) {
+        contacts[contactIndex].lastMessage = messageInput;
+        contacts[contactIndex].time = "Just now";
+        contacts[contactIndex].unread = 0;
+      }
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+  const formatTime = (timestamp) => {
+    if (!timestamp) return "";
+    const now = new Date();
+    const msgDate = new Date(timestamp);
+    const diffTime = Math.abs(now - msgDate);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+      return msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffDays === 1) {
+      return "Yesterday";
+    } else {
+      return msgDate.toLocaleDateString();
     }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-gray-50 font-sans">
-      {/* Sidebar - Groups List */}
-      <div className="w-full lg:w-1/3 xl:w-1/4 bg-white border-r border-gray-200 flex flex-col">
+    <div className="h-full bg-gray-50 flex">
+
+      {/* Sidebar - Contacts List */}
+      <div
+        className={`${selectedContact ? "hidden md:flex" : "flex"} w-full md:w-96 bg-white border-r border-gray-200 flex-col`}
+      >
         {/* Header */}
-        <div className="p-4 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-800">Messages</h1>
-          <p className="text-sm text-gray-500 mt-1">Chat and get engaged with your splitz.</p>
-        </div>
-        
-        {/* Search Bar */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="px-6 py-2 border-b border-gray-200 flex-shrink-0">
+          <motion.h1 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent mb-2"
+          >
+            Messages
+          </motion.h1>
+          
+          {/* Search Bar */}
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 transition-colors group-focus-within:text-green-600" />
             <input
               type="text"
-              placeholder="Search messages..."
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search contacts..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-gray-50 hover:bg-white"
             />
           </div>
         </div>
-        
-        {/* Groups List */}
-        <div className="flex-1 overflow-y-auto">
-          {groups.map((group) => (
-            <div
-              key={group.id}
-              className={`p-4 border-b border-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-50 ${
-                activeGroup === group.name ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
-              }`}
-              onClick={() => setActiveGroup(group.name)}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-medium text-gray-900 truncate">{group.name}</h3>
-                    <span className="text-xs text-gray-500">{group.time}</span>
-                  </div>
-                  <p className="text-sm text-gray-600 truncate mb-1">{group.description}</p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-gray-500 truncate">{group.lastMessage}</p>
-                    {group.unread > 0 && (
-                      <span className="bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {group.unread}
-                      </span>
-                    )}
-                  </div>
+
+        {/* Contacts List */}
+        <div className="flex-1 overflow-y-auto py-2">
+          <AnimatePresence>
+            {filteredContacts.map((contact, index) => (
+              <motion.button
+                key={contact.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ scale: 1.01, backgroundColor: "#f9fafb" }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedContact(contact)}
+                className={`w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-all border-b border-gray-100 last:border-b-0 ${
+                  selectedContact?.id === contact.id ? "bg-green-50 border-l-4 border-l-green-600" : ""
+                }`}
+              >
+                {/* Avatar with online indicator */}
+                <div className="relative flex-shrink-0">
+                  <motion.div 
+                    whileHover={{ scale: 1.1 }}
+                    className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md"
+                  >
+                    {contact.avatar}
+                  </motion.div>
+                  {contact.online && (
+                    <motion.span 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"
+                    ></motion.span>
+                  )}
                 </div>
-                <MoreVertical className="w-5 h-5 text-gray-400 ml-2 flex-shrink-0" />
-              </div>
-            </div>
-          ))}
+
+                {/* Contact Info */}
+                <div className="flex-1 text-left min-w-0">
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="font-semibold text-gray-800 truncate">{contact.name}</p>
+                    <span className="text-xs text-gray-500 flex-shrink-0 ml-2">{contact.time}</span>
+                  </div>
+                  <p className="text-sm text-gray-500 truncate">{contact.lastMessage}</p>
+                </div>
+
+                {/* Unread Badge */}
+                <AnimatePresence>
+                  {contact.unread > 0 && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="w-6 h-6 bg-gradient-to-r from-green-600 to-green-700 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-md"
+                    >
+                      {contact.unread}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
-      
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-white">
-        {/* Chat Header */}
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="font-bold text-gray-900">
-                {activeGroup === 'Concert Ticket Group' ? 'Concert Ticket Splitz Group' : activeGroup}
-              </h2>
-              <div className="flex items-center space-x-2">
-                {activeGroup === 'Concert Ticket Group' ? (
-                  <>
-                    <span className="text-sm text-gray-600">3 members</span>
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">About Help</span>
-                  </>
-                ) : (
-                  <span className="text-sm text-gray-600">
-                    {groups.find(g => g.name === activeGroup)?.members || 2} members
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Phone className="w-6 h-6 text-gray-600 cursor-pointer hover:text-blue-500" />
-            <Video className="w-6 h-6 text-gray-600 cursor-pointer hover:text-blue-500" />
-            <UserPlus className="w-6 h-6 text-gray-600 cursor-pointer hover:text-blue-500" />
-          </div>
-        </div>
-        
-        {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-          {activeGroup === 'Concert Ticket Group' && (
-            <div className="mb-6">
-              <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="font-bold text-lg text-gray-900 mb-2">Concert Ticket Splitz Group</h3>
-                <div className="flex items-center text-sm text-gray-600 mb-4">
-                  <Users className="w-4 h-4 mr-1" />
-                  <span>3 members</span>
-                  <span className="mx-2">•</span>
-                  <span className="text-blue-500 font-medium">About Help</span>
+
+      {/* Chat Area */}
+      <div
+        className={`${selectedContact ? "flex" : "hidden md:flex"} flex-1 flex-col bg-gray-50`}
+      >
+        {selectedContact ? (
+          <>
+            {/* Chat Header */}
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white border-b border-gray-200 p-4 flex items-center justify-between flex-shrink-0"
+            >
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setSelectedContact(null)}
+                  className="md:hidden p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <ArrowLeft className="w-6 h-6 text-gray-600" />
+                </button>
+                
+                <div className="relative">
+                  <div className="w-11 h-11 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+                    {selectedContact.avatar}
+                  </div>
+                  {selectedContact.online && (
+                    <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>
+                  )}
                 </div>
                 
-                <div className="space-y-4 text-sm text-gray-700">
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <span className="font-medium">You joined the splitz</span>
-                  </div>
-                  <p className="text-gray-600">
-                    <span className="font-medium">[Please choose to be free for background and contact with you about this policy.]</span>
+                <div>
+                  <p className="font-semibold text-gray-800">{selectedContact.name}</p>
+                  <p className="text-xs text-gray-500">
+                    {selectedContact.online ? "Active now" : "Offline"}
                   </p>
-                  <div className="p-3 bg-green-50 rounded-lg">
-                    <span className="font-medium">Thanks to join us</span>
-                  </div>
-                  <p>
-                    Some more fun I just want to express that information on my favorite drink along others.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition">
-                      Please contact
-                    </button>
-                    <button className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg text-sm hover:bg-blue-50 transition">
-                      Apply to join us
-                    </button>
-                  </div>
                 </div>
               </div>
+
+              <div className="flex items-center gap-1">
+                <motion.button 
+                  whileHover={{ scale: 1.1, backgroundColor: "#f3f4f6" }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <Phone className="w-5 h-5 text-gray-600" />
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.1, backgroundColor: "#f3f4f6" }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <Video className="w-5 h-5 text-gray-600" />
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.1, backgroundColor: "#f3f4f6" }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <MoreVertical className="w-5 h-5 text-gray-600" />
+                </motion.button>
+              </div>
+            </motion.div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <AnimatePresence>
+                {messages[selectedContact.id]?.map((message) => (
+                  <motion.div
+                    key={message.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={`flex ${message.sender === "me" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+                        message.sender === "me"
+                          ? "bg-gradient-to-r from-green-600 to-green-700 text-white rounded-br-lg"
+                          : "bg-white text-gray-800 rounded-bl-lg border border-gray-200"
+                      }`}
+                    >
+                      <p className="leading-relaxed">{message.text}</p>
+                      <p
+                        className={`text-xs mt-1.5 font-medium ${
+                          message.sender === "me" ? "text-green-100" : "text-gray-500"
+                        }`}
+                      >
+                        {message.time}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              <div ref={messagesEndRef} />
             </div>
-          )}
-          
-          {/* Messages List */}
-          <div className="space-y-4 max-w-3xl mx-auto">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                    message.sender === 'user'
-                      ? 'bg-blue-500 text-white rounded-tr-none'
-                      : message.sender === 'admin'
-                      ? 'bg-purple-100 text-gray-800 rounded-tl-none'
-                      : 'bg-gray-100 text-gray-600 rounded-tl-none'
+
+            {/* Message Input */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white border-t border-gray-200 p-4 flex-shrink-0"
+            >
+              <div className="flex items-center gap-3">
+                <motion.button 
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                >
+                  <Paperclip className="w-5 h-5 text-gray-500" />
+                </motion.button>
+                
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                  className="flex-1 px-5 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-gray-50 hover:bg-white text-gray-800"
+                />
+                
+                <motion.button 
+                  whileHover={{ scale: 1.1, backgroundColor: "#15803d" }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleSendMessage}
+                  disabled={!messageInput.trim()}
+                  className={`bg-gradient-to-r from-green-600 to-green-700 text-white p-3 rounded-full transition-all flex-shrink-0 ${
+                    !messageInput.trim() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
                   }`}
                 >
-                  <p className="text-sm">{message.text}</p>
-                  <div className="flex items-center justify-end mt-1">
-                    <span className="text-xs opacity-80">{message.time}</span>
-                    {message.sender === 'user' && (
-                      <span className="ml-1">
-                        {message.read ? (
-                          <CheckCheck className="w-3 h-3" />
-                        ) : (
-                          <Check className="w-3 h-3" />
-                        )}
-                      </span>
-                    )}
-                  </div>
-                </div>
+                  <Send className="w-5 h-5" />
+                </motion.button>
               </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Message Input */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="max-w-3xl mx-auto flex items-center space-x-3">
-            <div className="flex-1 bg-gray-100 rounded-2xl px-4 py-2">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Type a message..."
-                className="w-full bg-transparent focus:outline-none text-gray-800 placeholder-gray-500"
-              />
-            </div>
-            <button
-              onClick={sendMessage}
-              className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition"
+            </motion.div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center px-8"
             >
-              <Send className="w-5 h-5 text-white" />
-            </button>
+              <motion.div 
+                whileHover={{ rotate: 10, scale: 1.1 }}
+                className="w-24 h-24 bg-gradient-to-r from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
+              >
+                <Send className="w-12 h-12 text-green-600" />
+              </motion.div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-3">Select a conversation</h2>
+              <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
+                Choose a contact from the list to start messaging and sharing expenses
+              </p>
+            </motion.div>
           </div>
-          {activeGroup === 'Concert Ticket Group' && (
-            <p className="text-center text-xs text-gray-500 mt-2">
-              Jumps in PTSD phone
-            </p>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default MessagingDashboard;
+}
