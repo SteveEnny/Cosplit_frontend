@@ -9,20 +9,18 @@ const SplashLogo = lazy(() => import("./components/Loading"));
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Auth/Login"));
 const Register = lazy(() => import("./pages/Auth/Register"));
-const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Preonboarding = lazy(() => import("./pages/Onboarding"));
+const Postonboarding = lazy(() => import("./pages/OnBoardingSteps"));
 // const Identify = lazy(() => import("./pages/Identification"));
 const ForgetPassword = lazy(() => import("./pages/Auth/ForgetPassword"));
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
-const ConfirmPassword = lazy(() =>
-  import("./pages/Auth/ConfirmPassword/ConfirmPassword")
+const ConfirmPassword = lazy(() => import("./pages/Auth/ConfirmPassword/ConfirmPassword")
 );
 const PasswordResetSuccess = lazy(() => import("./pages/PasswordResetSuccess"));
 const OnboardingSteps = lazy(() => import("./pages/OnBoardingSteps"));
 
 /* Dashboard */
-const DashboardLayout = lazy(() =>
-  import("./components/Layout/DashboardLayout")
-);
+const DashboardLayout = lazy(() => import("./components/Layout/DashboardLayout"));
 const Overview = lazy(() => import("./pages/Dashboard/DashHome"));
 const Messages = lazy(() => import("./pages/Dashboard/Messages"));
 const Analytics = lazy(() => import("./pages/Dashboard/Analytics"));
@@ -67,9 +65,9 @@ export default function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Onboarding */}
-        <Route path="/onboard" element={<Onboarding />} />
+        <Route path="/pre-onboard" element={<Preonboarding />} />
         {/* <Route path="/identify" element={<Identify />} /> */}
-        <Route path="/onboarding-steps" element={<OnboardingSteps />} />
+        <Route path="/post-onboarding" element={<Postonboarding/>} />
 
         {/* Password */}
         <Route path="/forgot-password" element={<ForgetPassword />} />
