@@ -9,13 +9,12 @@ import {
   UserPlus,
   ChevronLeft,
 } from "lucide-react";
-import useSplitStore from "../../store/splitStore";
-import { splitService } from "../../services/splitService";
+
 
 const SplitDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { currentSplit, setCurrentSplit, addParticipant } = useSplitStore();
+
   const [isJoining, setIsJoining] = useState(false);
   const [currentUserId] = useState(1);
 

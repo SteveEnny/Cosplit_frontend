@@ -73,10 +73,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/confirm-password" element={<ConfirmPassword />} />
-        <Route
-          path="/password-reset-success"
-          element={<PasswordResetSuccess />}
-        />
+        <Route path="/password-reset-success" element={<PasswordResetSuccess />} />
 
         {/* Dashboard */}
         <Route path="/dashboard" element={<DashboardLayout />}>

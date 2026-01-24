@@ -8,7 +8,7 @@ import Overlay4 from "../../assets/Overlay3.svg";
 import { splits, deals } from "../../Data/Alldata";
 import ActiveSplits from "../../components/ActiveSplits";
 
-const Main = ({ sidebarOpen = false, isMobile = false, setSidebarOpen = () => {} }) => {
+const Main = () => {
   const [activeTab, setActiveTab] = useState("All Active");
 
   const categories = [
